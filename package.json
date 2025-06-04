@@ -28,10 +28,17 @@
     "test": ""
   },
   "dependencies": {
+    "@prisma/client": "^6.9.0",
+    "argon2": "^0.43.0",
+    "cors": "^2.8.5",
     "dotenv": "^16.5.0",
-    "express": "^5.1.0"
+    "express": "^5.1.0",
+    "helmet": "^8.1.0",
+    "morgan": "^1.10.0"
   },
   "devDependencies": {
-    "@types/express": "^5.0.2"
+    "@types/cors": "^2.8.18",
+    "@types/express": "^5.0.2",
+    "prisma": "^6.9.0"
   }
 }
