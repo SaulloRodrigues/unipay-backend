@@ -71,3 +71,40 @@ export async function createNewUser(data) {
 
     return newUser;
 }
+
+export async function updateUser(id,data) {
+ const user= await getUserById(id);
+ const passwordHashed = await argon2.hash(data.password);
+
+ if(user){
+    const update_user = await prisma.users.update({
+        where : {
+            id : user.id,
+        },
+        data: {
+                name  : data.name || user.name,
+                surname : data.surname || user.surname,
+                email : data.email || user.email,
+                password_hash : passwordHashed || user.password_hash, 
+        }
+    })
+  }
+  return user;
+}
+
+export async function deleteUser(id) {
+    const user = getUserById(id);
+
+    if(user){
+        const delete_user = await prisma.users.delete({
+            where:{
+                id: user.id,
+            },
+        });
+
+        return true;
+    }
+
+    return false;
+    
+}

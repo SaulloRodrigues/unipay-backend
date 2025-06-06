@@ -63,14 +63,29 @@ export async function createUser(req, res) {
 
 export async function updateUser(req, res) {
   const { id } = req.params
-  const { name, surname, birth_date, email, password } = req.body;
-
-  // Lógica a ser implementada.
+  const { name, surname, email, password } = req.body;
+  try{
+    const user = await updateUser({id} , {name, surname, email, password});
+    if(!user){
+      return res.status(404).json({message : "Usuário não encontrado"});
+    }
+    return res.status(201).json(user);
+  }catch(erro){
+    return res.status(500).json({ message : erro.message});
+  }
 }
 
 
 export async function deleteUser(req, res) {
   const { id } = req.params;
-
-  // Lógica a ser implementada.
+  try{
+    const sucess = await deleteUser(id);
+    if(!sucess){
+      return res.status(404).json({message : "Usuário não encontrado"});
+    }
+    return res.status(201).json({message : "Usuário deletado com sucesso"});
+  }
+  catch(erro){
+    return res.status(500).json({message : erro.message});
+  }
 }
