@@ -1,41 +1,47 @@
-import argon2 from 'argon2'
-
-// Tese de simulação de um bd.
-const users = [];
+import { authUser, createNewUser, getUserById, getUsers } from '../services/userService.js';
 
 export async function getAllUsers(req, res) {
-  res.status(200).json(users);
-  // Lógica a ser implementada
+  try {
+    const users = await getUsers();
+    return res.status(200).json(users);
+  } catch (erro) {
+    return res.status(500).json({ message: erro.message });
+  }
 }
 
 export async function getUser(req, res) {
   const { id } = req.params;
 
-  // Lógica a ser implementada
+  if (!id) {
+    return res.status(401).json({ message: "Você precisa fornecer o ID." });
+  }
+  
+  try {
+    const user = await getUserById(id);
+    return res.status(200).json(user);
+  } catch (erro) {
+    return res.status(404).json({ message: erro.message });
+  }
 }
 
 export async function loginUser(req, res) {
-  const {email, password} = req.body;
+  const { email, password } = req.body;
 
   if (!email || !password) {
-    return res.status(401).json({message: "Campos faltando."});
+    return res.status(401).json({ message: "Campos faltando na requisição." });
   }
 
-  // lógica a ser implementada do bd ainda.
-
-  // Verifica se a senha informada está correta.
-  const hasWrongPassword = !await argon2.verify("campo que vai vir do banco de dados",password);
-
-  if (hasWrongPassword) {
-    return res.status(403).json({message: "Usuário não autorizado."})
+  try {
+    const user = await authUser({ email, password });
+    return res.status(200).json({ message: "Usuário autenticado com sucesso.", user });
+  } catch (erro) {
+    return res.status(403).json({ message: erro.message });
   }
-
-  return res.status(201).json({message: "Usuário autorizado com sucesso."})
 }
 
 export async function createUser(req, res) {
   // Campos necessários para criar o usuário.
-  const requiredFields = ["name", "surname", "age", "email", "password"];
+  const requiredFields = ["name", "surname", "birth_date", "email", "password"];
 
   const body = req.body;
 
@@ -44,31 +50,20 @@ export async function createUser(req, res) {
 
   // Caso tenha campos faltando ele retorna com um erro.
   if (hasMissingFields) {
-    return res.status(401).json({ message: "Campos incompletos." })
+    return res.status(401).json({ message: "Campos faltando na requisição." })
   }
 
-  // Senha hasheada para ser salva no db.
-  const passwordHashed = await argon2.hash(body.password);
-
-  // Estrutura para um novo usuário.
-  const newUser = {
-    id: crypto.randomUUID(),
-    name: body.name,
-    surname: body.surname,
-    age: body.age,
-    email: body.email,
-    password: passwordHashed
-  };
-
-  users.push({ ...newUser });
-
-  return res.status(200).json(newUser)
-
+  try {
+    const user = await createNewUser(body);
+    return res.status(201).json(user);
+  } catch (erro) {
+    return res.status(500).json({ message: erro.message });
+  }
 }
 
 export async function updateUser(req, res) {
   const { id } = req.params
-  const { name, surname, age, email, password } = req.body;
+  const { name, surname, birth_date, email, password } = req.body;
 
   // Lógica a ser implementada.
 }

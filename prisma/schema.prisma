@@ -1,0 +1,54 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model transactions {
+  id                                                Int                 @id @default(autoincrement())
+  wallet_origin_id                                  Int?
+  wallet_recipient_id                               Int?
+  amount                                            Decimal             @db.Decimal(10, 2)
+  status                                            transactions_status
+  type                                              transactions_type
+  created_at                                        DateTime            @default(now()) @db.Timestamp(0)
+  wallets_transactions_wallet_origin_idTowallets    wallets?            @relation("transactions_wallet_origin_idTowallets", fields: [wallet_origin_id], references: [id], map: "transactions_ibfk_1")
+  wallets_transactions_wallet_recipient_idTowallets wallets?            @relation("transactions_wallet_recipient_idTowallets", fields: [wallet_recipient_id], references: [id], map: "transactions_ibfk_2")
+
+  @@index([wallet_origin_id], map: "wallet_origin_id")
+  @@index([wallet_recipient_id], map: "wallet_recipient_id")
+}
+
+model users {
+  id            Int      @id @default(autoincrement())
+  name          String   @db.VarChar(100)
+  surname       String   @db.VarChar(100)
+  birth_date    DateTime @db.Date
+  email         String   @unique(map: "email") @db.VarChar(255)
+  password_hash String   @db.VarChar(255)
+  wallets       wallets?
+}
+
+model wallets {
+  id                                                     Int            @id @default(autoincrement())
+  user_id                                                Int            @unique(map: "user_id")
+  amount                                                 Decimal        @default(0.00) @db.Decimal(10, 2)
+  transactions_transactions_wallet_origin_idTowallets    transactions[] @relation("transactions_wallet_origin_idTowallets")
+  transactions_transactions_wallet_recipient_idTowallets transactions[] @relation("transactions_wallet_recipient_idTowallets")
+  users                                                  users          @relation(fields: [user_id], references: [id], onDelete: Cascade, map: "wallets_ibfk_1")
+}
+
+enum transactions_status {
+  success
+  failed
+}
+
+enum transactions_type {
+  withdrawal
+  deposit
+  transfer
+}

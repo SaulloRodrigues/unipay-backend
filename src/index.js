@@ -20,7 +20,7 @@ app.use(helmet());
 app.use(morgan('dev'));
 
 // Middlewares de registro das rotas.
-app.use('/users', userRouter);
+app.use('/user', userRouter);
 app.use('/wallet', walletRouter);
 app.use('/transaction', transactionRouter);
 
