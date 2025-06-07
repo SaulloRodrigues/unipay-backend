@@ -57,6 +57,11 @@ export async function createUser(req, res) {
     const user = await createNewUser(body);
     return res.status(201).json({ message: "Usuário criado com sucesso", user });
   } catch (erro) {
+    // Tratando o erro de usuário já existente.
+    // O erro P2002 é um erro do Prisma que indica que há uma violação de unique constraint.
+    if (erro.code === "P2002" && erro.meta?.target?.includes("email")) {
+      return res.status(409).json({ message: "Já existe um usuário com estes dados." });
+    }
     return res.status(500).json({ message: erro.message });
   }
 }

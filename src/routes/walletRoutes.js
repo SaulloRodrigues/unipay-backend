@@ -1,9 +1,11 @@
 import { Router } from "express";
-import { createWallet, getWallet } from "../controllers/walletController.js";
+import { createWallet, getAllWallets, getWallet, updateWallet } from "../controllers/walletController.js";
 
 const walletRouter = Router();
 
-walletRouter.get('/', getWallet);
+walletRouter.get('/', getAllWallets);
+walletRouter.get('/:id', getWallet);
 walletRouter.post('/', createWallet);
+walletRouter.patch('/', updateWallet);
 
 export default walletRouter;
