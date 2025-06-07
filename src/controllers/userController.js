@@ -1,4 +1,4 @@
-import { authUser, createNewUser, getUserById, getUsers } from '../services/userService.js';
+import { authUser, createNewUser, getUserById, getUsers, updateUserById, deleteUserById } from '../services/userService.js';
 
 export async function getAllUsers(req, res) {
   try {
@@ -15,7 +15,7 @@ export async function getUser(req, res) {
   if (!id) {
     return res.status(401).json({ message: "Você precisa fornecer o ID." });
   }
-  
+
   try {
     const user = await getUserById(id);
     return res.status(200).json(user);
@@ -64,28 +64,25 @@ export async function createUser(req, res) {
 export async function updateUser(req, res) {
   const { id } = req.params
   const { name, surname, email, password } = req.body;
-  try{
-    const user = await updateUser({id} , {name, surname, email, password});
-    if(!user){
-      return res.status(404).json({message : "Usuário não encontrado"});
-    }
-    return res.status(201).json(user);
-  }catch(erro){
-    return res.status(500).json({ message : erro.message});
+  try {
+    const user = await updateUserById(id, { name, surname, email, password });
+    return res.status(200).json(user);
+  } catch (erro) {
+    return res.status(500).json({ message: erro.message });
   }
 }
 
 
 export async function deleteUser(req, res) {
   const { id } = req.params;
-  try{
-    const sucess = await deleteUser(id);
-    if(!sucess){
-      return res.status(404).json({message : "Usuário não encontrado"});
+  try {
+    const sucess = await deleteUserById(id);
+    if (!sucess) {
+      return res.status(404).json({ message: "Usuário não encontrado" });
     }
-    return res.status(201).json({message : "Usuário deletado com sucesso"});
+    return res.status(201).json({ message: "Usuário deletado com sucesso" });
   }
-  catch(erro){
-    return res.status(500).json({message : erro.message});
+  catch (erro) {
+    return res.status(500).json({ message: erro.message });
   }
 }

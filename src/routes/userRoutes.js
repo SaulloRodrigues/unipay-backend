@@ -7,7 +7,7 @@ userRouter.get('/', getAllUsers);
 userRouter.get('/:id', getUser);
 userRouter.post('/', createUser);
 userRouter.post('/login', loginUser);
-userRouter.patch('/', updateUser);
+userRouter.put('/:id', updateUser);
 userRouter.delete('/:id', deleteUser);
 
 export default userRouter;

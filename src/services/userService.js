@@ -20,12 +20,6 @@ export async function getUsers() {
 export async function getUserById(id) {
     const user = await prisma.users.findUnique({
         where: { id: Number(id) },
-        select: {
-            id: true,
-            name: true,
-            surname: true,
-            email: true,
-        }
     });
 
     if (!user) {
@@ -72,32 +66,40 @@ export async function createNewUser(data) {
     return newUser;
 }
 
-export async function updateUser(id,data) {
- const user= await getUserById(id);
- const passwordHashed = await argon2.hash(data.password);
+// Vou ter que alterar a lógica de UpdateUserById, não tá fazendo sentido, ela não está retornando o usuário atualizado, e sim o usuário antigo.
 
- if(user){
-    const update_user = await prisma.users.update({
-        where : {
-            id : user.id,
-        },
-        data: {
-                name  : data.name || user.name,
-                surname : data.surname || user.surname,
-                email : data.email || user.email,
-                password_hash : passwordHashed || user.password_hash, 
-        }
-    })
-  }
-  return user;
+export async function updateUserById(id, data) {
+    try {
+        const user = await getUserById(id);
+
+        // Verifica se o usuário passou a senha, se sim, faz o hash da senha nova, se não, mantém o hash da senha antiga.
+        // Está verificação é importante pois caso o usuário não passe uma senha, o Argon2 irá tentar fazer o hash e irá dar erro, pois o mesmo espera uma string.
+        let passwordHashed = data.password ? await argon2.hash(data.password) : user.password_hash;
+
+        const updatedUser = await prisma.users.update({
+            where: {
+                id: user.id,
+            },
+            data: {
+                name: data.name || user.name,
+                surname: data.surname || user.surname,
+                email: data.email || user.email,
+                password_hash: passwordHashed,
+            }
+        });
+
+        return updatedUser;
+    } catch (erro) {
+        throw new Error(erro.message);
+    }
 }
 
-export async function deleteUser(id) {
+export async function deleteUserById(id) {
     const user = getUserById(id);
 
-    if(user){
+    if (user) {
         const delete_user = await prisma.users.delete({
-            where:{
+            where: {
                 id: user.id,
             },
         });
@@ -106,5 +108,5 @@ export async function deleteUser(id) {
     }
 
     return false;
-    
+
 }
