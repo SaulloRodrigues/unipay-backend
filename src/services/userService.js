@@ -66,8 +66,6 @@ export async function createNewUser(data) {
     return newUser;
 }
 
-// Vou ter que alterar a lógica de UpdateUserById, não tá fazendo sentido, ela não está retornando o usuário atualizado, e sim o usuário antigo.
-
 export async function updateUserById(id, data) {
     try {
         const user = await getUserById(id);
@@ -94,19 +92,23 @@ export async function updateUserById(id, data) {
     }
 }
 
+// Executa a exclusão de um usuário pelo ID
 export async function deleteUserById(id) {
-    const user = getUserById(id);
-
-    if (user) {
-        const delete_user = await prisma.users.delete({
+    // Ela realiza somente uma query de exclusão, caso o usuário não exista, o Prisma irá retornar um erro.
+    // Isso evita o uso de getUserById, pois caso fosse usada, haveria duas queries, e isso não é necessário.
+    try {
+        const user = await prisma.users.delete({
             where: {
-                id: user.id,
-            },
+                id: Number(id),
+            }
         });
 
-        return true;
+        return user;
+    } catch (erro) {
+        if (erro.code === 'P2025') {
+            throw new Error("Usuário não foi encontrado.");
+        }
+
+        throw new Error("Erro ao deletar o usuário.");
     }
-
-    return false;
-
 }

@@ -18,7 +18,7 @@ export async function getUser(req, res) {
 
   try {
     const user = await getUserById(id);
-    return res.status(200).json(user);
+    return res.status(200).json({ message: "Usuário encontrado com sucesso", user });
   } catch (erro) {
     return res.status(404).json({ message: erro.message });
   }
@@ -50,12 +50,12 @@ export async function createUser(req, res) {
 
   // Caso tenha campos faltando ele retorna com um erro.
   if (hasMissingFields) {
-    return res.status(401).json({ message: "Campos faltando na requisição." })
+    return res.status(400).json({ message: "Campos faltando na requisição." })
   }
 
   try {
     const user = await createNewUser(body);
-    return res.status(201).json(user);
+    return res.status(201).json({ message: "Usuário criado com sucesso", user });
   } catch (erro) {
     return res.status(500).json({ message: erro.message });
   }
@@ -66,7 +66,7 @@ export async function updateUser(req, res) {
   const { name, surname, email, password } = req.body;
   try {
     const user = await updateUserById(id, { name, surname, email, password });
-    return res.status(200).json(user);
+    return res.status(200).json({ message: "Usuário atualizado com sucesso", user });
   } catch (erro) {
     return res.status(500).json({ message: erro.message });
   }
@@ -76,11 +76,8 @@ export async function updateUser(req, res) {
 export async function deleteUser(req, res) {
   const { id } = req.params;
   try {
-    const sucess = await deleteUserById(id);
-    if (!sucess) {
-      return res.status(404).json({ message: "Usuário não encontrado" });
-    }
-    return res.status(201).json({ message: "Usuário deletado com sucesso" });
+    const user = await deleteUserById(id);
+    return res.status(200).json({ message: "Usuário deletado com sucesso", user });
   }
   catch (erro) {
     return res.status(500).json({ message: erro.message });
