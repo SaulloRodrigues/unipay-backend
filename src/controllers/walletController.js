@@ -1,4 +1,4 @@
-import { createWalletUser, getWalletById, getWallets, updateWalletAmount } from "../services/walletService.js";
+import { createWalletUser, getWalletById, getWallets } from "../services/walletService.js";
 
 export async function getAllWallets(req, res) {
     try {
@@ -33,18 +33,6 @@ export async function createWallet(req, res) {
             return res.status(409).json({ message: "Já existe uma carteira para esse usuário." });
         }
 
-        return res.status(500).json({ message: erro.message });
-    }
-}
-
-// Para atualizar o montante da carteira, você deve enviar o ID da carteira e o valor pelo BODY da requisição.
-export async function updateWallet(req, res) {
-    const { wallet_id, amount } = req.body;
-
-    try {
-        const updatedWallet = await updateWalletAmount(wallet_id, amount);
-        return res.status(200).json({ message: "Carteira atualizada com sucesso.", updatedWallet });
-    } catch (erro) {
         return res.status(500).json({ message: erro.message });
     }
 }

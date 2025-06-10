@@ -20,6 +20,7 @@
   "contributors": [],
   "scripts": {
     "dev": "node .",
+    "dbpull": "prisma db pull",
     "generate": "prisma generate"
   },
   "dependencies": {

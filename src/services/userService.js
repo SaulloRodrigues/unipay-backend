@@ -10,8 +10,8 @@ export async function getUsers() {
         }
     });
 
-    if (!users) {
-        throw new Error("Erro ao obter os usuários.");
+    if (!users || users.length === 0) {
+        throw new Error("Nenhum usuário cadastrado.");
     }
 
     return users;

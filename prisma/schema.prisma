@@ -44,12 +44,12 @@ model wallets {
 }
 
 enum transactions_status {
-  success
-  failed
+  SUCESS
+  FAILED
 }
 
 enum transactions_type {
-  withdrawal
-  deposit
-  transfer
+  WITHDRAWAL
+  DEPOSIT
+  TRANSFER
 }

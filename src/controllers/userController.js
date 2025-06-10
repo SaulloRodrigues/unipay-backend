@@ -5,7 +5,7 @@ export async function getAllUsers(req, res) {
     const users = await getUsers();
     return res.status(200).json(users);
   } catch (erro) {
-    return res.status(500).json({ message: erro.message });
+    return res.status(404).json({ message: erro.message });
   }
 }
 
