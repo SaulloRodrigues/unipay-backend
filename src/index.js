@@ -20,9 +20,9 @@ app.use(helmet());
 app.use(morgan('dev'));
 
 // Middlewares de registro das rotas.
-app.use('/user', userRouter);
-app.use('/wallet', walletRouter);
-app.use('/transaction', transactionRouter);
+app.use('/users', userRouter);
+app.use('/wallets', walletRouter);
+app.use('/transactions', transactionRouter);
 
 app.listen(port, () => {
     console.log(`Aplicação rodando na porta ${port}`)

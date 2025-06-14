@@ -43,13 +43,13 @@ model wallets {
   users                                                  users          @relation(fields: [user_id], references: [id], onDelete: Cascade, map: "wallets_ibfk_1")
 }
 
-enum transactions_status {
-  SUCESS
-  FAILED
-}
-
 enum transactions_type {
   WITHDRAWAL
   DEPOSIT
   TRANSFER
+}
+
+enum transactions_status {
+  SUCCESS
+  FAILED
 }
