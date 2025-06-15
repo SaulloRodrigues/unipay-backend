@@ -1,11 +1,11 @@
 {
-  "name": "",
+  "name": "unipay_backend",
   "version": "1.0.0",
   "description": "",
   "main": "src/index.js",
   "type": "module",
-  "license": "AGPL-version-3.0",
-  "private": false,
+  "license": "AGPL-3.0",
+  "private": true,
   "engines": {
     "node": ">= 14.0.0",
     "npm": ">= 6.0.0"
@@ -17,21 +17,26 @@
   },
   "bugs": "",
   "keywords": [],
-  "author": {
-    "name": "",
-    "email": "",
-    "url": ""
-  },
   "contributors": [],
   "scripts": {
     "dev": "node .",
-    "test": ""
+    "dbpull": "prisma db pull",
+    "generate": "prisma generate"
   },
   "dependencies": {
+    "@prisma/client": "^6.9.0",
+    "argon2": "^0.43.0",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
     "dotenv": "^16.5.0",
-    "express": "^5.1.0"
+    "express": "^5.1.0",
+    "helmet": "^8.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "morgan": "^1.10.0"
   },
   "devDependencies": {
-    "@types/express": "^5.0.2"
+    "@types/cors": "^2.8.18",
+    "@types/express": "^5.0.2",
+    "prisma": "^6.9.0"
   }
 }
