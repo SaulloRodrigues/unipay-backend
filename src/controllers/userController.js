@@ -1,5 +1,7 @@
-import { authUser, createNewUser, getUserById, getUsers, updateUserById, deleteUserById } from '../services/userService.js';
+import { createNewUser, getUsers, updateUserById, deleteUserById, getUserByEmail, authenticateUser, getUserById } from '../services/userService.js';
+import jwt from 'jsonwebtoken'
 
+// Busca todos os usuários no banco.
 export async function getAllUsers(req, res) {
   try {
     const users = await getUsers();
@@ -9,21 +11,40 @@ export async function getAllUsers(req, res) {
   }
 }
 
+// Busca um usuário pelo ID, verifica se o ID é válido primeiro.
 export async function getUser(req, res) {
   const { id } = req.params;
+  const parsedId = parseInt(id);
 
-  if (!id) {
-    return res.status(401).json({ message: "Você precisa fornecer o ID." });
+  if (!id || isNaN(parsedId)) {
+    return res.status(401).json({ message: "ID não fornecido ou inválido." });
   }
 
   try {
-    const user = await getUserById(id);
+    const user = await getUserById(parsedId);
     return res.status(200).json({ message: "Usuário encontrado com sucesso", user });
   } catch (erro) {
     return res.status(404).json({ message: erro.message });
   }
 }
 
+// Busca um usuário pelo email, verifica se o email foi fornecido.
+export async function getUserWithEmail(req, res) {
+  const { email } = req.params;
+
+  if (!email) {
+    return res.status(401).json({ message: "Você precisa fornecer o email." });
+  }
+
+  try {
+    const user = await getUserByEmail(email);
+    return res.status(200).json({ message: "Usuário encontrado com sucesso", user });
+  } catch (erro) {
+    return res.status(404).json({ message: erro.message });
+  }
+}
+
+// Autentica o usuário pelo email e senha, depois gera um JWT.
 export async function loginUser(req, res) {
   const { email, password } = req.body;
 
@@ -32,13 +53,25 @@ export async function loginUser(req, res) {
   }
 
   try {
-    const user = await authUser({ email, password });
+    const user = await authenticateUser({ email, password });
+
+    const token = jwt.sign({ id: user.id }, process.env.PRIVATE_KEY, { expiresIn: '8h' });
+
+    res.cookie('user-data', token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "strict",
+      maxAge: 8 * 60 * 60 * 1000,
+      path: '/'
+    })
+
     return res.status(200).json({ message: "Usuário autenticado com sucesso.", user });
   } catch (erro) {
     return res.status(403).json({ message: erro.message });
   }
 }
 
+// Cria um usuário depois de verificar se todos os campos obrigatórios estão presentes.
 export async function createUser(req, res) {
   // Campos necessários para criar o usuário.
   const requiredFields = ["name", "surname", "birth_date", "email", "password"];
@@ -66,9 +99,16 @@ export async function createUser(req, res) {
   }
 }
 
+// Atualiza o usuário autenticado pelo seu ID.
 export async function updateUser(req, res) {
-  const { id } = req.params
   const { name, surname, email, password } = req.body;
+
+  const id = req.user?.id
+
+  if (!id) {
+    return res.status(404).json({ message: "ID inválido ou inexistente." });
+  }
+
   try {
     const user = await updateUserById(id, { name, surname, email, password });
     return res.status(200).json({ message: "Usuário atualizado com sucesso", user });
@@ -77,9 +117,14 @@ export async function updateUser(req, res) {
   }
 }
 
-
+// Exclui o usuário autenticado pelo seu ID.
 export async function deleteUser(req, res) {
-  const { id } = req.params;
+  const id = req.user?.id
+
+  if (!id) {
+    return res.status(404).json({ message: "ID inválido ou inexistente." });
+  }
+
   try {
     const user = await deleteUserById(id);
     return res.status(200).json({ message: "Usuário deletado com sucesso", user });

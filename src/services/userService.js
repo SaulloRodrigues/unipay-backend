@@ -1,5 +1,7 @@
 import prisma from '../config/prismaClient.js';
 import argon2 from 'argon2';
+
+// Busca todos os usuários no banco, tentando trazer apenas algumas informações.
 export async function getUsers() {
     const users = await prisma.users.findMany({
         select: {
@@ -17,19 +19,40 @@ export async function getUsers() {
     return users;
 }
 
+// Busca um usuário pelo email, tentando trazer algumas informações públicas.
+export async function getUserByEmail(email) {
+    const user = await prisma.users.findUnique({
+        where: { email: email },
+        select: {
+            id: true,
+            name: true,
+            surname: true,
+            email: true,
+        }
+    });
+
+    if (!user) {
+        throw new Error("Usuário com o email fornecido não encontrado.");
+    }
+
+    return user;
+}
+
+// Busca um usuário pelo ID. Lança um erro se ele não encontrar ninguém.
 export async function getUserById(id) {
     const user = await prisma.users.findUnique({
         where: { id: Number(id) },
     });
 
     if (!user) {
-        throw new Error("Usuário não encontrado.");
+        throw new Error("Usuário com o id fornecido não encontrado.");
     }
 
     return user;
 }
 
-export async function authUser(data) {
+// Autentica o usuário comparando o password_hash no banco com a senha informada.
+export async function authenticateUser(data) {
     const { email, password } = data;
 
     const user = await prisma.users.findUnique({
@@ -45,6 +68,7 @@ export async function authUser(data) {
     return user;
 }
 
+// Cria um usuário no banco depois de fazer o hash da senha.
 export async function createNewUser(data) {
 
     const passwordHashed = await argon2.hash(data.password);
@@ -66,6 +90,7 @@ export async function createNewUser(data) {
     return newUser;
 }
 
+// Atualiza o usuário pelo ID, faz o hash da nova senha se ela for passada.
 export async function updateUserById(id, data) {
     try {
         const user = await getUserById(id);
@@ -92,10 +117,8 @@ export async function updateUserById(id, data) {
     }
 }
 
-// Executa a exclusão de um usuário pelo ID
+// Exclui o usuário pelo ID. Se ele não existe, lança um erro.
 export async function deleteUserById(id) {
-    // Ela realiza somente uma query de exclusão, caso o usuário não exista, o Prisma irá retornar um erro.
-    // Isso evita o uso de getUserById, pois caso fosse usada, haveria duas queries, e isso não é necessário.
     try {
         const user = await prisma.users.delete({
             where: {
@@ -105,10 +128,6 @@ export async function deleteUserById(id) {
 
         return user;
     } catch (erro) {
-        if (erro.code === 'P2025') {
-            throw new Error("Usuário não foi encontrado.");
-        }
-
         throw new Error("Erro ao deletar o usuário.");
     }
 }
