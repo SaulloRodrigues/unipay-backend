@@ -1,5 +1,6 @@
 import { createWalletUser, getWalletById, getWallets } from "../services/walletService.js";
 
+// Busca e responde com a lista de todas as carteiras.
 export async function getAllWallets(req, res) {
     try {
         const wallets = await getWallets();
@@ -9,6 +10,7 @@ export async function getAllWallets(req, res) {
     }
 }
 
+// Busca a carteira pelo seu id e lista se for encontrada.
 export async function getWallet(req, res) {
     const { id } = req.params;
 
@@ -20,6 +22,7 @@ export async function getWallet(req, res) {
     }
 }
 
+// Cria uma nova carteira para um usuário, e verifica se ele já possui uma.
 export async function createWallet(req, res) {
     const { user_id } = req.body;
 

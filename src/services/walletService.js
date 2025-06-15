@@ -1,9 +1,11 @@
 import { Decimal } from "@prisma/client/runtime/library";
 import prisma from "../config/prismaClient.js";
 
+// Busca e devolve uma lista com todas as carteiras encontradas. 
 export async function getWallets() {
     const wallets = await prisma.wallets.findMany();
 
+    // Lança um erro se caso não encontrar nada.
     if (!wallets || wallets.length === 0) {
         throw new Error("Nenhuma carteira cadastrada.");
     }
@@ -11,6 +13,7 @@ export async function getWallets() {
     return wallets;
 }
 
+// Busca uma carteira pelo ID.
 export async function getWalletById(walletId) {
     const wallet = await prisma.wallets.findUnique({
         where: {
@@ -18,6 +21,7 @@ export async function getWalletById(walletId) {
         }
     });
 
+    // Lança um erro se não encontrar a carteira solicitada.
     if (!wallet) {
         throw new Error("Carteira não encontrada.");
     }
@@ -25,6 +29,7 @@ export async function getWalletById(walletId) {
     return wallet;
 }
 
+// Cria uma nova carteira para um usuário existente
 export async function createWalletUser(userId) {
 
     const newWallet = await prisma.wallets.create({
@@ -41,6 +46,7 @@ export async function createWalletUser(userId) {
     return newWallet;
 }
 
+// Atualiza o valor da carteira pelo ID.
 export async function updateWalletAmount(walletId, newAmount) {
     const updatedWallet = await prisma.wallets.update({
         where: {
@@ -51,6 +57,7 @@ export async function updateWalletAmount(walletId, newAmount) {
         }
     });
 
+    // Lança um erro se não encontrar a carteira passada.
     if (!updatedWallet) {
         throw new Error("Erro ao atualizar a carteira.");
     }

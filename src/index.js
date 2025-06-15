@@ -11,18 +11,19 @@ import cookieParser from 'cookie-parser';
 const app = express();
 const port = process.env.APP_PORT || 3000
 
-// Middlewares essencias/segurança para as rotas.
+// Middlewares para preparar o Express para uso:
+// - Express.JSON faz o parser do body para JSON;
+// - CORS para permitir requisições de outras origens;
+// - Helmet para reforçar na segurança;
+// - Morgan para registrar as requests no console;
+// - CookieParser para trabalhar com cookies.
 app.use(express.json());
-// Configurações de cross-origin
 app.use(cors());
-// Proteção contra ataques HTTP
 app.use(helmet());
-// Logs das requisições
 app.use(morgan('dev'));
-// Utilização de cookies. 
 app.use(cookieParser());
 
-// Middlewares de registro das rotas.
+// Registra as rotas da aplicação
 app.use('/users', userRouter);
 app.use('/wallets', walletRouter);
 app.use('/transactions', transactionRouter);
