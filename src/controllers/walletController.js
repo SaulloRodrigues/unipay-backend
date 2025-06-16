@@ -24,10 +24,14 @@ export async function getWallet(req, res) {
 
 // Cria uma nova carteira para um usuário, e verifica se ele já possui uma.
 export async function createWallet(req, res) {
-    const { user_id } = req.body;
+    const id = req.user?.id
+
+    if (!id) {
+        return res.status(404).json({ message: "ID inválido ou inexistente." });
+    }
 
     try {
-        const newWallet = await createWalletUser(user_id);
+        const newWallet = await createWalletUser(id);
         return res.status(201).json({ message: "Carteira criada com sucesso", newWallet });
     } catch (erro) {
         // Tratando o erro de carteira já existente e referenciado a um usuário.
