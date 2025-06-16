@@ -59,10 +59,14 @@ export async function authenticateUser(data) {
         where: { email }
     });
 
+    if (!user) {
+        throw new Error("Email ou senha inválido.");
+    }
+
     const isPasswordValid = await argon2.verify(user.password_hash, password);
 
-    if (!user || !isPasswordValid) {
-        throw new Error("Usuário ou senha inválido.");
+    if (!isPasswordValid) {
+        throw new Error("Email ou senha inválido.");
     }
 
     return user;
