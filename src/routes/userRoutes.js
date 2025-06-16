@@ -9,7 +9,7 @@ userRouter.get('/email/:email', getUserWithEmail);
 userRouter.post('/', createUser);
 userRouter.post('/login', loginUser);
 // Rotas seguras (Autenticação JWT)
-userRouter.get('/:id', verifyJWT, getUser);
+userRouter.get('/me', verifyJWT, getUser);
 userRouter.put('/', verifyJWT, updateUser);
 userRouter.delete('/', verifyJWT, deleteUser);
 

@@ -13,6 +13,23 @@ export async function getWallets() {
     return wallets;
 }
 
+export async function getWalletByUserId(id) {
+    const wallet = await prisma.wallets.findUnique({
+        where: {
+            OR: [
+                { user_id: Number(id) }
+            ]
+        }
+    });
+
+    // Lança um erro se não encontrar a carteira solicitada.
+    if (!wallet) {
+        throw new Error("Carteira não encontrada.");
+    }
+
+    return wallet;
+}
+
 // Busca uma carteira pelo ID.
 export async function getWalletById(walletId) {
     const wallet = await prisma.wallets.findUnique({

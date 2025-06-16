@@ -13,15 +13,14 @@ export async function getAllUsers(req, res) {
 
 // Busca um usuário pelo ID, verifica se o ID é válido primeiro.
 export async function getUser(req, res) {
-  const { id } = req.params;
-  const parsedId = parseInt(id);
+  const id = req.user?.id
 
-  if (!id || isNaN(parsedId)) {
-    return res.status(401).json({ message: "ID não fornecido ou inválido." });
+  if (!id) {
+    return res.status(401).json({ message: "ID inválido ou inexistente." });
   }
 
   try {
-    const user = await getUserById(parsedId);
+    const user = await getUserById(id);
     return res.status(200).json({ message: "Usuário encontrado com sucesso", user });
   } catch (erro) {
     return res.status(404).json({ message: erro.message });

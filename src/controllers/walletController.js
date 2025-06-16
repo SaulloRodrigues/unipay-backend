@@ -1,4 +1,4 @@
-import { createWalletUser, getWalletById, getWallets } from "../services/walletService.js";
+import { createWalletUser, getWalletById, getWalletByUserId, getWallets } from "../services/walletService.js";
 
 // Busca e responde com a lista de todas as carteiras.
 export async function getAllWallets(req, res) {
@@ -22,8 +22,7 @@ export async function getWallet(req, res) {
     }
 }
 
-// Cria uma nova carteira para um usuário, e verifica se ele já possui uma.
-export async function createWallet(req, res) {
+export async function getWalletByUser(req, res) {
     const id = req.user?.id
 
     if (!id) {
@@ -31,7 +30,25 @@ export async function createWallet(req, res) {
     }
 
     try {
-        const newWallet = await createWalletUser(id);
+        const wallet = await getWalletByUserId(id);
+        return res.status(200).json({ message: "Carteira encontrada com sucesso", wallet });
+    } catch (erro) {
+        return res.status(404).json({ message: erro.message });
+    }
+}
+
+// Cria uma nova carteira para um usuário, e verifica se ele já possui uma.
+export async function createWallet(req, res) {
+    const { user_id } = req.body
+
+    console.log(user_id)
+
+    if (!user_id) {
+        return res.status(404).json({ message: "ID inválido ou inexistente." });
+    }
+
+    try {
+        const newWallet = await createWalletUser(user_id);
         return res.status(201).json({ message: "Carteira criada com sucesso", newWallet });
     } catch (erro) {
         // Tratando o erro de carteira já existente e referenciado a um usuário.
