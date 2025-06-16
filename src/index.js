@@ -18,7 +18,7 @@ const port = process.env.APP_PORT || 3000
 // - Morgan para registrar as requests no console;
 // - CookieParser para trabalhar com cookies.
 app.use(express.json());
-app.use(cors());
+app.use(cors({ origin: "http://localhost:5173", credentials: true }));
 app.use(helmet());
 app.use(morgan('dev'));
 app.use(cookieParser());
