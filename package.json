@@ -19,7 +19,7 @@
   "keywords": [],
   "contributors": [],
   "scripts": {
-    "dev": "node .",
+    "start": "node src/index.js",
     "dbpull": "prisma db pull",
     "generate": "prisma generate"
   },
