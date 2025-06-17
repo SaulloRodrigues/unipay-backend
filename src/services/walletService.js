@@ -15,10 +15,7 @@ export async function getWallets() {
 
 export async function getWalletByUserId(id) {
     const wallet = await prisma.wallets.findUnique({
-        where: {
-            OR: [
-                { user_id: Number(id) }
-            ]
+        where: { user_id: Number(id)
         }
     });
 

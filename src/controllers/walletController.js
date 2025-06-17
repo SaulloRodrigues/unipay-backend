@@ -6,7 +6,7 @@ export async function getAllWallets(req, res) {
         const wallets = await getWallets();
         return res.status(200).json({ message: "Carteiras encontradas com sucesso", wallets });
     } catch (erro) {
-        return res.status(404).json({ message: erro.message });
+        return res.status(500).json({ message: erro.message });
     }
 }
 
@@ -18,22 +18,24 @@ export async function getWallet(req, res) {
         const wallet = await getWalletById(id);
         return res.status(200).json({ message: "Carteira encontrada com sucesso", wallet });
     } catch (erro) {
-        return res.status(404).json({ message: erro.message });
+        return res.status(500).json({ message: erro.message });
     }
 }
 
 export async function getWalletByUser(req, res) {
     const id = req.user?.id
 
+    console.log(id)
+
     if (!id) {
-        return res.status(404).json({ message: "ID inválido ou inexistente." });
+        return res.status(403).json({ message: "ID inválido ou inexistente." });
     }
 
     try {
         const wallet = await getWalletByUserId(id);
         return res.status(200).json({ message: "Carteira encontrada com sucesso", wallet });
     } catch (erro) {
-        return res.status(404).json({ message: erro.message });
+        return res.status(500).json({ message: erro.message });
     }
 }
 
