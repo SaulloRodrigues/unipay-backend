@@ -92,6 +92,10 @@ export async function createDepositTransaction(data) {
 export async function createTransferTransaction(data) {
     const { wallet_origin_id, wallet_recipient_id, amount } = data;
 
+    if (wallet_origin_id == wallet_recipient_id) {
+        throw new Error("Não é possível transferir para você mesmo.");
+    }
+
     const fromWallet = await getWalletById(wallet_origin_id);
     const toWallet = await getWalletById(wallet_recipient_id);
 

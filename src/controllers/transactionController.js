@@ -34,7 +34,13 @@ export async function getTransactionsByWalletId(req, res) {
 
 // Função para processar o endpoint de saque de uma carteira.
 export async function withdrawalTransaction(req, res) {
-    const { wallet_origin_id, amount } = req.body;
+    const { amount } = req.body;
+    const wallet_origin_id = req.user?.id
+
+    if (!wallet_origin_id) {
+        return res.status(401).json({ message: "ID inválido ou inexistente." });
+    }
+
     try {
         const newWithdrawalTransaction = await createWithdrawalTransaction({
             wallet_origin_id: Number(wallet_origin_id),
@@ -49,7 +55,12 @@ export async function withdrawalTransaction(req, res) {
 
 // Função para processar o endpoint de depósito de uma carteira.
 export async function depositTransaction(req, res) {
-    const { wallet_origin_id, amount } = req.body;
+    const { amount } = req.body;
+    const wallet_origin_id = req.user?.id
+
+    if (!wallet_origin_id) {
+        return res.status(401).json({ message: "ID inválido ou inexistente." });
+    }
     try {
         const newDepositTransaction = await createDepositTransaction({
             wallet_origin_id: Number(wallet_origin_id),
@@ -65,8 +76,13 @@ export async function depositTransaction(req, res) {
 
 // Função para processar o endpoint de transferência entre duas carteiras.
 export async function transferTransaction(req, res) {
-    const { wallet_origin_id, wallet_recipient_id, amount } = req.body;
+    const { wallet_recipient_id, amount } = req.body;
+    const wallet_origin_id = req.user?.id;
 
+    if (!wallet_origin_id) {
+        return res.status(401).json({ message: "ID inválido ou inexistente." });
+    }
+    
     try {
         const newTransferTransaction = await createTransferTransaction({
             wallet_origin_id: Number(wallet_origin_id),

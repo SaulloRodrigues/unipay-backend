@@ -31,12 +31,15 @@ export async function getUser(req, res) {
 export async function getUserWithEmail(req, res) {
   const { email } = req.params;
 
+  console.log(email)
+
   if (!email) {
     return res.status(401).json({ message: "Você precisa fornecer o email." });
   }
 
   try {
     const user = await getUserByEmail(email);
+    console.log(user)
     return res.status(200).json({ message: "Usuário encontrado com sucesso", user });
   } catch (erro) {
     return res.status(404).json({ message: erro.message });

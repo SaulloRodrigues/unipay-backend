@@ -25,8 +25,6 @@ export async function getWallet(req, res) {
 export async function getWalletByUser(req, res) {
     const id = req.user?.id
 
-    console.log(id)
-
     if (!id) {
         return res.status(403).json({ message: "ID inválido ou inexistente." });
     }
@@ -42,8 +40,6 @@ export async function getWalletByUser(req, res) {
 // Cria uma nova carteira para um usuário, e verifica se ele já possui uma.
 export async function createWallet(req, res) {
     const { user_id } = req.body
-
-    console.log(user_id)
 
     if (!user_id) {
         return res.status(404).json({ message: "ID inválido ou inexistente." });
