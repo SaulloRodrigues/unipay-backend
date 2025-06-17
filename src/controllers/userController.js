@@ -73,6 +73,21 @@ export async function loginUser(req, res) {
   }
 }
 
+// Dentro do seu controller (userController.js)
+
+export async function logoutUser(req, res) {
+  res.cookie('user-data', '', {
+    httpOnly: true,
+    secure: true,
+    sameSite: "strict",
+    expires: new Date(0),
+    path: '/'
+  });
+
+  return res.status(200).json({ message: "Usuário deslogado com sucesso." });
+}
+
+
 // Cria um usuário depois de verificar se todos os campos obrigatórios estão presentes.
 export async function createUser(req, res) {
   // Campos necessários para criar o usuário.
